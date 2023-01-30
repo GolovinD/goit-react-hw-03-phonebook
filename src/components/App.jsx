@@ -86,8 +86,23 @@ class App extends React.Component {
     });
   }
 
+  componentDidMount() {
+    const contacts = JSON.parse(localStorage.getItem('contacts'))
+    if (contacts) {
+      this.setState({contacts})
+    }
+    
+  }
+  
+  componentDidUpdate(prevState) {
+    if (this.state.contacts !== prevState.contacts) {
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts))
+    }
+  }
+
+
   render() {
-    const { filter } = this.state;
+    const { filter, contacts } = this.state;
     const wantedContacts = this.getWantedContacts();
   
     return (
@@ -103,10 +118,11 @@ class App extends React.Component {
             filterData={filter}  
             onFilter={this.handleNameChange}    
           />
-          <ContactList
-            contacts={wantedContacts}
-            onDeleteContact={this.deleteContacts}
-          />
+          {contacts.length > 0 &&
+            <ContactList
+              contacts={wantedContacts}
+              onDeleteContact={this.deleteContacts}
+            />}
         </Section>
       </div>
     );
